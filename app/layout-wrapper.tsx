@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { MainNav } from "@/components/main-nav"
+import { LeftPanel } from "@/components/left-panel"
 import { OnboardingModal } from "@/components/onboarding-modal"
 import { useEffect } from "react"
 import { useSimulatorStore } from "@/store/simulator-store"
@@ -36,6 +37,13 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-neutral-950 text-neutral-100">
       <MainNav />
+      <div
+        className={`${
+          leftOpen ? "w-[320px]" : "w-0"
+        } transition-all duration-200 overflow-hidden border-r border-neutral-800 bg-neutral-900`}
+      >
+        <LeftPanel />
+      </div>
       <main className="flex-1 flex flex-col">{children}</main>
       <OnboardingModal />
     </div>

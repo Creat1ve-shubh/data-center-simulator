@@ -8,18 +8,21 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Papa from "papaparse"
 import { useSimulatorStore } from "@/store/simulator-store"
 import { computeMetricSummaries } from "@/lib/compute-metrics"
 import { generateSampleTelemetry } from "@/lib/sample-data"
 import { generatePlan } from "@/lib/planner"
+import { AutoPlanWizard } from "@/components/auto-plan-wizard"
+import { CostEstimationPanel } from "@/components/cost-estimation-panel"
+import { RenewableSuggestion } from "@/components/roadmap/renewable-suggestion"
 
 export function LeftPanel() {
   const { setTelemetry, setSummaries, setParams, params, planInput, setPlanInput, setPlanResult, telemetry } =
     useSimulatorStore()
   const [csvError, setCsvError] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [showWizard, setShowWizard] = useState(false)
 
   function loadSample() {
     const sample = generateSampleTelemetry()
@@ -71,6 +74,7 @@ export function LeftPanel() {
       await new Promise((resolve) => setTimeout(resolve, 500))
       const r = generatePlan({ ...planInput, startDate: new Date() }, telemetry)
       setPlanResult(r)
+      setShowWizard(false)
     } finally {
       setIsGenerating(false)
     }
@@ -82,140 +86,85 @@ export function LeftPanel() {
         {/* Auto-Plan */}
         <AccordionItem value="auto" className="rounded-lg border border-neutral-800 bg-neutral-900 px-3">
           <AccordionTrigger className="text-neutral-100">Auto-Plan (Geolocation & Cost)</AccordionTrigger>
-          <AccordionContent className="space-y-3 text-sm text-neutral-300">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="col-span-2">
-                <Label>Region</Label>
-                <Select value={planInput.regionId} onValueChange={(v) => setPlanInput({ regionId: v as any })}>
-                  <SelectTrigger className="bg-neutral-800 border-neutral-700">
-                    <SelectValue placeholder="Select region" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="us-west">US West</SelectItem>
-                    <SelectItem value="us-east">US East</SelectItem>
-                    <SelectItem value="eu-central">EU Central</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Target coverage %</Label>
-                <Input
-                  type="number"
-                  min={5}
-                  max={100}
-                  value={planInput.targetPct}
-                  onChange={(e) => setPlanInput({ targetPct: Number(e.target.value) })}
-                  className="bg-neutral-800 border-neutral-700"
-                />
-              </div>
-              <div>
-                <Label>Target year</Label>
-                <Input
-                  type="number"
-                  min={new Date().getFullYear()}
-                  value={planInput.targetYear}
-                  onChange={(e) => setPlanInput({ targetYear: Number(e.target.value) })}
-                  className="bg-neutral-800 border-neutral-700"
-                />
-              </div>
-              <div>
-                <Label>Budget (USD)</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  step={10000}
-                  value={planInput.budgetCapUSD}
-                  onChange={(e) => setPlanInput({ budgetCapUSD: Number(e.target.value) })}
-                  className="bg-neutral-800 border-neutral-700"
-                />
-              </div>
-              <div>
-                <Label>Max phases</Label>
-                <Input
-                  type="number"
-                  min={1}
-                  max={6}
-                  value={planInput.maxPhases}
-                  onChange={(e) => setPlanInput({ maxPhases: Number(e.target.value) })}
-                  className="bg-neutral-800 border-neutral-700"
-                />
-              </div>
-              <div>
-                <Label>Max months per phase</Label>
-                <Input
-                  type="number"
-                  min={3}
-                  max={24}
-                  value={planInput.maxMonthsPerPhase}
-                  onChange={(e) => setPlanInput({ maxMonthsPerPhase: Number(e.target.value) })}
-                  className="bg-neutral-800 border-neutral-700"
-                />
-              </div>
-              <div>
-                <Label>Tariff ($/kWh)</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  step={0.01}
-                  value={planInput.tariffUSDkWh}
-                  onChange={(e) => setPlanInput({ tariffUSDkWh: Number(e.target.value) })}
-                  className="bg-neutral-800 border-neutral-700"
-                />
-              </div>
-              <div className="col-span-2 grid grid-cols-4 gap-2">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={planInput.allowSolar}
-                    onChange={(e) => setPlanInput({ allowSolar: e.target.checked })}
-                  />
-                  <span>Solar</span>
+          <AccordionContent className="space-y-4 text-sm text-neutral-300">
+            {!showWizard ? (
+              <div className="space-y-4">
+                {/* Quick View */}
+                <div className="rounded-lg bg-neutral-800 p-3 border border-neutral-700 space-y-2">
+                  <p className="text-xs font-medium text-neutral-200">Current Settings:</p>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <p className="text-neutral-500">Region:</p>
+                      <p className="text-neutral-200 font-medium">{planInput.regionId}</p>
+                    </div>
+                    <div>
+                      <p className="text-neutral-500">Target:</p>
+                      <p className="text-neutral-200 font-medium">{planInput.targetPct}%</p>
+                    </div>
+                    <div>
+                      <p className="text-neutral-500">Budget:</p>
+                      <p className="text-neutral-200 font-medium">${(planInput.budgetCapUSD / 1000).toFixed(0)}K</p>
+                    </div>
+                    <div>
+                      <p className="text-neutral-500">Tariff:</p>
+                      <p className="text-neutral-200 font-medium">${planInput.tariffUSDkWh.toFixed(3)}/kWh</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={planInput.allowWind}
-                    onChange={(e) => setPlanInput({ allowWind: e.target.checked })}
-                  />
-                  <span>Wind</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={planInput.allowHydro}
-                    onChange={(e) => setPlanInput({ allowHydro: e.target.checked })}
-                  />
-                  <span>Hydro</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={planInput.allowStorage}
-                    onChange={(e) => setPlanInput({ allowStorage: e.target.checked })}
-                  />
-                  <span>Storage</span>
+
+                {/* Renewable Suggestion */}
+                <RenewableSuggestion regionId={planInput.regionId} />
+
+                {/* Cost Estimation */}
+                <CostEstimationPanel
+                  regionId={planInput.regionId}
+                  tariffUSDkWh={planInput.tariffUSDkWh}
+                  targetPct={planInput.targetPct}
+                  budgetCapUSD={planInput.budgetCapUSD}
+                />
+
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => setShowWizard(true)}
+                    className="flex-1 bg-teal-500 hover:bg-teal-400 text-black"
+                  >
+                    Edit Settings
+                  </Button>
+                  <Button
+                    onClick={handleGenerateRoadmap}
+                    disabled={isGenerating}
+                    className="flex-1 bg-green-600 hover:bg-green-500 text-white"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <span className="inline-block animate-spin mr-2">⟳</span>
+                        Generating...
+                      </>
+                    ) : (
+                      "Generate"
+                    )}
+                  </Button>
                 </div>
               </div>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                className="bg-teal-500 hover:bg-teal-400 text-black disabled:opacity-50"
-                onClick={handleGenerateRoadmap}
-                disabled={isGenerating}
-              >
-                {isGenerating ? (
-                  <>
-                    <span className="inline-block animate-spin mr-2">⟳</span>
-                    Generating...
-                  </>
-                ) : (
-                  "Generate roadmap"
-                )}
-              </Button>
-              <p className="text-xs text-neutral-500">
-                Generates a phased plan using regional CF, LCOE, and lead times—no external APIs.
-              </p>
-            </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Wizard Mode */}
+                <AutoPlanWizard
+                  planInput={planInput}
+                  onUpdate={setPlanInput}
+                  onGenerate={handleGenerateRoadmap}
+                  isGenerating={isGenerating}
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => setShowWizard(false)}
+                  className="w-full bg-neutral-800 border-neutral-700"
+                >
+                  Back to Quick View
+                </Button>
+              </div>
+            )}
           </AccordionContent>
         </AccordionItem>
 
