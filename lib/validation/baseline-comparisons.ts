@@ -3,7 +3,7 @@
  * Compares GreenCloud auto-plan against industry baselines
  */
 
-import type { EnhancedTelemetryPoint } from "@/types"
+import type { EnhancedTelemetryPoint, Region } from "@/types"
 
 export interface BaselineResult {
   name: string
@@ -151,4 +151,8 @@ export function compareAllBaselines(telemetry: EnhancedTelemetryPoint[]): Baseli
   greedy.annual_carbon_reduction_vs_baseline_kg = gridOnly.total_carbon_kg - greedy.total_carbon_kg
 
   return [gridOnly, manual, greedy]
+}
+
+export function compareBaselines(telemetry: EnhancedTelemetryPoint[], region: Region): BaselineResult[] {
+  return compareAllBaselines(telemetry)
 }

@@ -4,7 +4,7 @@
  * and real-world patterns (solar, wind, temperature, grid carbon)
  */
 
-import type { EnhancedTelemetryPoint, LocationProfile, WeatherData, GridData, WorkloadTrace } from "@/types"
+import type { EnhancedTelemetryPoint, LocationProfile, WeatherData, GridData, WorkloadTrace, Region } from "@/types"
 import { calculateDynamicPUE } from "./energy-model"
 
 // Location profiles for 5 case study regions
@@ -226,4 +226,41 @@ export function generateEnhancedTelemetry(
   }
 
   return points
+}
+
+export function generateRealDataset(location: LocationProfile | Region, days: number): EnhancedTelemetryPoint[] {
+  // Handle both LocationProfile and Region types
+  let profile: LocationProfile
+
+  if ("latitude" in location) {
+    profile = location as LocationProfile
+  } else {
+    // Convert Region to LocationProfile
+    const regionName = (location as Region).name.toLowerCase()
+    profile = LOCATION_PROFILES[regionName] || LOCATION_PROFILES.california
+  }
+
+  const hours = days * 24
+  return generateEnhancedTelemetry(profile, 1200, hours)
+}
+
+export interface LocationDataset {
+  itLoadKw: number
+  solarIrradianceWm2: number
+  windSpeedMs: number
+  gridPriceUsdKwh: number
+  gridCarbonGco2Kwh: number
+}
+
+export function generateLocationDataset(location: string, hours: number): LocationDataset[] {
+  const profile = LOCATION_PROFILES[location as keyof typeof LOCATION_PROFILES] || LOCATION_PROFILES.california
+  const telemetry = generateEnhancedTelemetry(profile, 1200, hours)
+
+  return telemetry.map((point) => ({
+    itLoadKw: point.it_load_kW,
+    solarIrradianceWm2: point.solar_irradiance_w_m2,
+    windSpeedMs: point.wind_speed_m_s,
+    gridPriceUsdKwh: point.electricity_price_usd_kwh,
+    gridCarbonGco2Kwh: point.grid_carbon_intensity_g_co2_kwh,
+  }))
 }

@@ -1,6 +1,6 @@
 // Phase 2: Formalize Optimization Algorithm with Mathematical Constraints
 
-import type { Region, LCOEData } from "@/types"
+import type { Region, LCOEData, EnhancedTelemetryPoint } from "@/types"
 
 export interface OptimizationProblem {
   objective: number // Total cost in USD
@@ -22,6 +22,25 @@ export interface OptimizationConstraints {
   siteLandArea: number // hectares
   siteRoofArea: number // m²
   annualEnergyDemand: number // MWh
+}
+
+export interface OptimizationOptions {
+  budget_USD: number
+  target_renewable_percentage: number
+  planning_horizon_years: number
+}
+
+export interface OptimizationResult {
+  solar_capacity_MW: number
+  wind_capacity_MW: number
+  hydro_capacity_MW: number
+  battery_capacity_MWh: number
+  total_cost_USD: number
+  annual_savings_USD: number
+  payback_period_years: number
+  roi_percentage: number
+  renewable_percentage: number
+  emissions_reduction_kg_co2: number
 }
 
 // Decision variables for optimization
@@ -189,4 +208,50 @@ export function multiObjectiveOptimization(
 
   // Return the solution with better multi-objective score
   return greedyScore < lpScore ? greedySolution : lpSolution
+}
+
+export function optimizeRenewableTransition(
+  telemetry: EnhancedTelemetryPoint[],
+  region: Region,
+  options: OptimizationOptions,
+): OptimizationResult {
+  // Calculate annual energy demand from telemetry
+  const annualEnergyDemand = telemetry.reduce((sum, p) => sum + p.facility_energy_kWh, 0)
+
+  // Create constraints from options
+  const constraints: OptimizationConstraints = {
+    maxBudget: options.budget_USD,
+    minRenewableTarget: options.target_renewable_percentage,
+    maxGridImport: 100 - options.target_renewable_percentage,
+    siteLandArea: 50, // hectares
+    siteRoofArea: 5000, // m²
+    annualEnergyDemand,
+  }
+
+  // Get LCOE data (placeholder - should come from real data)
+  const lcoeData: LCOEData = {
+    solar: 40, // $/kW
+    wind: 50,
+    hydro: 60,
+    battery: 150,
+  }
+
+  // Run multi-objective optimization
+  const optimization = multiObjectiveOptimization(constraints, lcoeData, region, annualEnergyDemand)
+
+  // Calculate ROI
+  const roi = (optimization.annualSavings / optimization.objective) * 100
+
+  return {
+    solar_capacity_MW: optimization.solarCapacity,
+    wind_capacity_MW: optimization.windCapacity,
+    hydro_capacity_MW: optimization.hydroCapacity,
+    battery_capacity_MWh: optimization.batteryCapacity,
+    total_cost_USD: optimization.objective,
+    annual_savings_USD: optimization.annualSavings,
+    payback_period_years: optimization.paybackPeriod,
+    roi_percentage: roi,
+    renewable_percentage: optimization.renewablePercentage,
+    emissions_reduction_kg_co2: optimization.emissionReduction,
+  }
 }
