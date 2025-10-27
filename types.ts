@@ -104,3 +104,68 @@ export type PlanResult = {
   }
   rationale: string
 }
+
+export type WeatherData = {
+  timestamp: Date
+  temperature_c: number
+  solar_irradiance_w_m2: number
+  wind_speed_m_s: number
+  cloud_cover_pct: number
+}
+
+export type GridData = {
+  timestamp: Date
+  carbon_intensity_g_co2_kwh: number
+  electricity_price_usd_kwh: number
+}
+
+export type WorkloadTrace = {
+  timestamp: Date
+  cpu_utilization_pct: number
+  memory_utilization_pct: number
+  storage_utilization_pct: number
+}
+
+export type EnhancedTelemetryPoint = TelemetryPoint & {
+  temperature_c?: number
+  solar_irradiance_w_m2?: number
+  wind_speed_m_s?: number
+  grid_carbon_intensity_g_co2_kwh?: number
+  electricity_price_usd_kwh?: number
+  pue_dynamic?: number
+  dcue?: number
+  renewable_pct?: number
+  solar_pct?: number
+  wind_pct?: number
+  hydro_pct?: number
+}
+
+export type LocationProfile = {
+  name: string
+  latitude: number
+  longitude: number
+  region: RegionId
+  timezone: string
+  typical_outdoor_temp_c: number
+  solar_cf_annual: number
+  wind_cf_annual: number
+}
+
+export type Region = {
+  name: string
+  latitude: number
+  longitude: number
+  capacityFactors: {
+    solar: number
+    wind: number
+    hydro: number
+  }
+  timezone: string
+}
+
+export type LCOEData = {
+  solar: number // $/kW
+  wind: number // $/kW
+  hydro: number // $/kW
+  battery: number // $/kWh
+}
