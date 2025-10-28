@@ -264,20 +264,20 @@ const sections = [
 
 export default function DocumentationPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-black py-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Documentation</h1>
-          <p className="mt-2 text-lg text-gray-600">
+          <h1 className="text-3xl font-bold text-white">Documentation</h1>
+          <p className="mt-2 text-lg text-neutral-400">
             Complete technical reference for data center energy optimization
           </p>
         </div>
 
         {/* Quick Navigation */}
-        <Card className="mb-8">
+        <Card className="mb-8 bg-neutral-900 border-neutral-800">
           <CardHeader>
-            <CardTitle>Quick Navigation</CardTitle>
+            <CardTitle className="text-white">Quick Navigation</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
@@ -285,7 +285,7 @@ export default function DocumentationPage() {
                 <a
                   key={section.id}
                   href={`#${section.id}`}
-                  className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"
+                  className="rounded-lg bg-neutral-800 px-4 py-2 text-sm font-medium text-neutral-300 transition-colors hover:bg-primary hover:text-white"
                 >
                   {section.title}
                 </a>
@@ -299,30 +299,36 @@ export default function DocumentationPage() {
           {sections.map((section) => {
             const Icon = section.icon;
             return (
-              <Card key={section.id} id={section.id} className="scroll-mt-8">
+              <Card
+                key={section.id}
+                id={section.id}
+                className="scroll-mt-8 bg-neutral-900 border-neutral-800"
+              >
                 <CardHeader>
                   <div className="flex items-center space-x-3">
-                    <div className="rounded-lg bg-green-100 p-2">
-                      <Icon className="h-6 w-6 text-green-600" />
+                    <div className="rounded-lg bg-primary/20 p-2 border border-primary/30">
+                      <Icon className="h-6 w-6 text-primary" />
                     </div>
-                    <CardTitle className="text-2xl">{section.title}</CardTitle>
+                    <CardTitle className="text-2xl text-white">
+                      {section.title}
+                    </CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
                   {/* Overview Section */}
                   {section.id === "overview" && section.content.description && (
                     <div>
-                      <p className="mb-4 text-gray-700">
+                      <p className="mb-4 text-neutral-300">
                         {section.content.description}
                       </p>
-                      <h3 className="mb-2 font-semibold text-gray-900">
+                      <h3 className="mb-2 font-semibold text-white">
                         Key Features
                       </h3>
                       <ul className="space-y-2">
                         {section.content.features?.map((feature, idx) => (
                           <li key={idx} className="flex items-start">
-                            <Zap className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-600" />
-                            <span className="text-gray-700">{feature}</span>
+                            <Zap className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-primary" />
+                            <span className="text-neutral-400">{feature}</span>
                           </li>
                         ))}
                       </ul>
@@ -335,25 +341,25 @@ export default function DocumentationPage() {
                       {section.content.metrics?.map((metric, idx) => (
                         <div
                           key={idx}
-                          className="rounded-lg border border-gray-200 p-4"
+                          className="rounded-lg border border-neutral-700 p-4 bg-neutral-800"
                         >
                           <div className="mb-2 flex items-center justify-between">
-                            <h3 className="font-semibold text-gray-900">
+                            <h3 className="font-semibold text-white">
                               {metric.name}
                             </h3>
                             <Badge variant="outline">Formula</Badge>
                           </div>
-                          <code className="mb-3 block rounded bg-gray-100 p-2 text-sm text-gray-800">
+                          <code className="mb-3 block rounded bg-neutral-950 p-2 text-sm text-neutral-300 border border-neutral-700">
                             {metric.formula}
                           </code>
-                          <p className="mb-2 text-sm text-gray-700">
+                          <p className="mb-2 text-sm text-neutral-400">
                             {metric.description}
                           </p>
-                          <div className="rounded bg-blue-50 p-3 text-sm">
-                            <span className="font-medium text-blue-900">
+                          <div className="rounded bg-blue-900/30 p-3 text-sm border border-blue-800/50">
+                            <span className="font-medium text-blue-200">
                               Example:
                             </span>{" "}
-                            <span className="text-blue-700">
+                            <span className="text-blue-100">
                               {metric.example}
                             </span>
                           </div>
@@ -368,56 +374,56 @@ export default function DocumentationPage() {
                       {section.content.algorithms?.map((algo, idx) => (
                         <div
                           key={idx}
-                          className="rounded-lg border border-gray-200 p-4"
+                          className="rounded-lg border border-neutral-700 p-4 bg-neutral-800"
                         >
-                          <h3 className="mb-2 font-semibold text-gray-900">
+                          <h3 className="mb-2 font-semibold text-white">
                             {algo.name}
                           </h3>
-                          <p className="mb-3 text-sm text-gray-700">
+                          <p className="mb-3 text-sm text-neutral-400">
                             {algo.description}
                           </p>
                           <div className="space-y-2 text-sm">
                             <div>
-                              <span className="font-medium text-gray-900">
+                              <span className="font-medium text-white">
                                 Approach:
                               </span>{" "}
-                              <span className="text-gray-600">
+                              <span className="text-neutral-400">
                                 {algo.approach}
                               </span>
                             </div>
                             {algo.inputs && (
                               <div>
-                                <span className="font-medium text-gray-900">
+                                <span className="font-medium text-white">
                                   Inputs:
                                 </span>{" "}
-                                <span className="text-gray-600">
+                                <span className="text-neutral-400">
                                   {algo.inputs}
                                 </span>
                               </div>
                             )}
                             {algo.outputs && (
                               <div>
-                                <span className="font-medium text-gray-900">
+                                <span className="font-medium text-white">
                                   Outputs:
                                 </span>{" "}
-                                <span className="text-gray-600">
+                                <span className="text-neutral-400">
                                   {algo.outputs}
                                 </span>
                               </div>
                             )}
                             {algo.accuracy && (
                               <div>
-                                <Badge className="bg-green-100 text-green-800">
+                                <Badge className="bg-green-900/30 text-green-200 border-green-700/50">
                                   {algo.accuracy}
                                 </Badge>
                               </div>
                             )}
                             {algo.considerations && (
                               <div>
-                                <span className="font-medium text-gray-900">
+                                <span className="font-medium text-white">
                                   Considerations:
                                 </span>{" "}
-                                <span className="text-gray-600">
+                                <span className="text-neutral-400">
                                   {algo.considerations}
                                 </span>
                               </div>
@@ -434,20 +440,20 @@ export default function DocumentationPage() {
                       {section.content.sources?.map((source, idx) => (
                         <div
                           key={idx}
-                          className="flex items-start space-x-3 rounded-lg border border-gray-200 p-4"
+                          className="flex items-start space-x-3 rounded-lg border border-neutral-700 p-4 bg-neutral-800"
                         >
-                          <Database className="mt-1 h-5 w-5 flex-shrink-0 text-gray-400" />
+                          <Database className="mt-1 h-5 w-5 flex-shrink-0 text-neutral-400" />
                           <div className="flex-1">
                             <div className="mb-1 flex items-center justify-between">
-                              <h3 className="font-semibold text-gray-900">
+                              <h3 className="font-semibold text-white">
                                 {source.category}
                               </h3>
                               <Badge variant="secondary">{source.source}</Badge>
                             </div>
-                            <p className="mb-1 text-sm text-gray-700">
+                            <p className="mb-1 text-sm text-neutral-400">
                               {source.description}
                             </p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-neutral-500">
                               Coverage: {source.coverage}
                             </p>
                           </div>
@@ -461,17 +467,17 @@ export default function DocumentationPage() {
                     <div className="space-y-6">
                       {section.content.practices?.map((practice, idx) => (
                         <div key={idx}>
-                          <h3 className="mb-3 font-semibold text-gray-900">
+                          <h3 className="mb-3 font-semibold text-white">
                             {practice.category}
                           </h3>
                           <ul className="space-y-2">
                             {practice.tips.map((tip, tipIdx) => (
                               <li
                                 key={tipIdx}
-                                className="flex items-start rounded-lg bg-gray-50 p-3"
+                                className="flex items-start rounded-lg bg-green-900/20 p-3 border border-green-700/40"
                               >
-                                <span className="mr-2 text-green-600">✓</span>
-                                <span className="text-sm text-gray-700">
+                                <span className="mr-2 text-green-400">✓</span>
+                                <span className="text-sm text-neutral-300">
                                   {tip}
                                 </span>
                               </li>
@@ -488,39 +494,39 @@ export default function DocumentationPage() {
                       {section.content.endpoints?.map((endpoint, idx) => (
                         <div
                           key={idx}
-                          className="rounded-lg border border-gray-200 p-4"
+                          className="rounded-lg border border-neutral-700 p-4 bg-neutral-800"
                         >
                           <div className="mb-3 flex items-center space-x-2">
                             <Badge
                               className={
                                 endpoint.method === "POST"
-                                  ? "bg-blue-100 text-blue-800"
-                                  : "bg-green-100 text-green-800"
+                                  ? "bg-blue-900/30 text-blue-200 border-blue-700/50"
+                                  : "bg-green-900/30 text-green-200 border-green-700/50"
                               }
                             >
                               {endpoint.method}
                             </Badge>
-                            <code className="text-sm font-mono text-gray-800">
+                            <code className="text-sm font-mono text-neutral-200">
                               {endpoint.path}
                             </code>
                           </div>
-                          <p className="mb-3 text-sm text-gray-700">
+                          <p className="mb-3 text-sm text-neutral-400">
                             {endpoint.description}
                           </p>
                           <div className="grid gap-4 md:grid-cols-2">
                             <div>
-                              <h4 className="mb-2 text-sm font-semibold text-gray-900">
+                              <h4 className="mb-2 text-sm font-semibold text-white">
                                 Request Body
                               </h4>
-                              <pre className="overflow-x-auto rounded bg-gray-900 p-3 text-xs text-gray-100">
+                              <pre className="overflow-x-auto rounded bg-neutral-950 p-3 text-xs text-neutral-300 border border-neutral-700">
                                 {JSON.stringify(endpoint.requestBody, null, 2)}
                               </pre>
                             </div>
                             <div>
-                              <h4 className="mb-2 text-sm font-semibold text-gray-900">
+                              <h4 className="mb-2 text-sm font-semibold text-white">
                                 Response
                               </h4>
-                              <pre className="overflow-x-auto rounded bg-gray-900 p-3 text-xs text-gray-100">
+                              <pre className="overflow-x-auto rounded bg-neutral-950 p-3 text-xs text-neutral-300 border border-neutral-700">
                                 {JSON.stringify(endpoint.response, null, 2)}
                               </pre>
                             </div>
@@ -536,26 +542,24 @@ export default function DocumentationPage() {
         </div>
 
         {/* Footer CTA */}
-        <Card className="mt-12 bg-gradient-to-r from-green-50 to-blue-50">
+        <Card className="mt-12 bg-gradient-to-r from-green-900/20 to-blue-900/20 border-neutral-800">
           <CardContent className="p-8 text-center">
-            <FileText className="mx-auto mb-4 h-12 w-12 text-green-600" />
-            <h2 className="text-2xl font-bold text-gray-900">
-              Need More Help?
-            </h2>
-            <p className="mt-2 text-gray-600">
+            <FileText className="mx-auto mb-4 h-12 w-12 text-primary" />
+            <h2 className="text-2xl font-bold text-white">Need More Help?</h2>
+            <p className="mt-2 text-neutral-400">
               Check out our case studies or reach out to our team for
               personalized guidance
             </p>
             <div className="mt-6 flex justify-center gap-4">
               <a
                 href="/case-studies"
-                className="rounded-lg bg-green-600 px-6 py-3 font-medium text-white transition-colors hover:bg-green-700"
+                className="rounded-lg bg-primary px-6 py-3 font-medium text-white transition-colors hover:bg-primary/90"
               >
                 View Case Studies
               </a>
               <a
                 href="/efficiency"
-                className="rounded-lg bg-white px-6 py-3 font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+                className="rounded-lg bg-neutral-800 px-6 py-3 font-medium text-white shadow-sm transition-colors hover:bg-neutral-700 border border-neutral-700"
               >
                 Try Simulator
               </a>

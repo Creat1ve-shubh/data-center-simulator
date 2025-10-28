@@ -174,14 +174,14 @@ const keyLearnings = [
 
 export default function CaseStudiesPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-neutral-950 py-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-neutral-100">
             Real-World Case Studies
           </h1>
-          <p className="mt-2 text-lg text-gray-600">
+          <p className="mt-2 text-lg text-neutral-400">
             Learn from successful data center energy transformations across the
             globe
           </p>
@@ -192,19 +192,22 @@ export default function CaseStudiesPage() {
           {keyLearnings.map((learning) => {
             const Icon = learning.icon;
             return (
-              <Card key={learning.title}>
+              <Card
+                key={learning.title}
+                className="bg-neutral-900 border-neutral-800"
+              >
                 <CardHeader>
                   <div className="flex items-center space-x-2">
-                    <div className="rounded-lg bg-green-100 p-2">
-                      <Icon className="h-5 w-5 text-green-600" />
+                    <div className="rounded-lg bg-green-600/20 p-2">
+                      <Icon className="h-5 w-5 text-green-500" />
                     </div>
-                    <CardTitle className="text-base">
+                    <CardTitle className="text-base text-neutral-100">
                       {learning.title}
                     </CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-neutral-400">
                     {learning.description}
                   </p>
                 </CardContent>
@@ -218,26 +221,27 @@ export default function CaseStudiesPage() {
           {caseStudies.map((study) => {
             const Icon = study.icon;
             const colorClasses = {
-              blue: "bg-blue-100 text-blue-700",
-              green: "bg-green-100 text-green-700",
-              yellow: "bg-yellow-100 text-yellow-700",
-              purple: "bg-purple-100 text-purple-700",
+              blue: "bg-blue-900/30 border-blue-700/50",
+              green: "bg-green-900/30 border-green-700/50",
+              yellow: "bg-yellow-900/30 border-yellow-700/50",
+              purple: "bg-purple-900/30 border-purple-700/50",
             };
 
             return (
-              <Card key={study.id} className="overflow-hidden">
+              <Card
+                key={study.id}
+                className="overflow-hidden bg-neutral-900 border-neutral-800"
+              >
                 <CardHeader
-                  className={`${colorClasses[study.color as keyof typeof colorClasses]} bg-opacity-10`}
+                  className={`${colorClasses[study.color as keyof typeof colorClasses]} border-b`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-4">
-                      <div
-                        className={`rounded-lg p-3 ${colorClasses[study.color as keyof typeof colorClasses]}`}
-                      >
-                        <Icon className="h-6 w-6" />
+                      <div className="rounded-lg p-3 bg-neutral-800">
+                        <Icon className="h-6 w-6 text-green-500" />
                       </div>
                       <div>
-                        <CardTitle className="text-xl">
+                        <CardTitle className="text-xl text-neutral-100">
                           {study.company}
                         </CardTitle>
                         <CardDescription className="mt-1">
@@ -257,22 +261,22 @@ export default function CaseStudiesPage() {
                     {/* Challenge & Solution */}
                     <div className="space-y-4">
                       <div>
-                        <h3 className="mb-2 font-semibold text-gray-900">
+                        <h3 className="mb-2 font-semibold text-neutral-100">
                           Challenge
                         </h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-neutral-300">
                           {study.challenge}
                         </p>
                       </div>
 
                       <div>
-                        <h3 className="mb-2 font-semibold text-gray-900">
+                        <h3 className="mb-2 font-semibold text-neutral-100">
                           Solution
                         </h3>
-                        <ul className="space-y-2 text-sm text-gray-600">
+                        <ul className="space-y-2 text-sm text-neutral-300">
                           {study.solution.map((item, idx) => (
                             <li key={idx} className="flex items-start">
-                              <span className="mr-2 text-green-600">✓</span>
+                              <span className="mr-2 text-green-500">✓</span>
                               {item}
                             </li>
                           ))}
@@ -282,55 +286,57 @@ export default function CaseStudiesPage() {
 
                     {/* Results */}
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-gray-900">Results</h3>
+                      <h3 className="font-semibold text-neutral-100">
+                        Results
+                      </h3>
                       <div className="grid gap-3">
-                        <div className="flex items-center justify-between rounded-lg bg-blue-50 p-3">
-                          <span className="text-sm font-medium text-blue-900">
+                        <div className="flex items-center justify-between rounded-lg bg-blue-900/20 border border-blue-700/30 p-3">
+                          <span className="text-sm font-medium text-blue-200">
                             PUE Improvement
                           </span>
-                          <span className="text-sm font-semibold text-blue-700">
+                          <span className="text-sm font-semibold text-blue-400">
                             {study.results.pueReduction}
                           </span>
                         </div>
-                        <div className="flex items-center justify-between rounded-lg bg-green-50 p-3">
-                          <span className="text-sm font-medium text-green-900">
+                        <div className="flex items-center justify-between rounded-lg bg-green-900/20 border border-green-700/30 p-3">
+                          <span className="text-sm font-medium text-green-200">
                             Renewable Energy
                           </span>
-                          <span className="text-sm font-semibold text-green-700">
+                          <span className="text-sm font-semibold text-green-400">
                             {study.results.renewableEnergy}
                           </span>
                         </div>
-                        <div className="flex items-center justify-between rounded-lg bg-yellow-50 p-3">
-                          <span className="text-sm font-medium text-yellow-900">
+                        <div className="flex items-center justify-between rounded-lg bg-yellow-900/20 border border-yellow-700/30 p-3">
+                          <span className="text-sm font-medium text-yellow-200">
                             Cost Savings
                           </span>
-                          <span className="text-sm font-semibold text-yellow-700">
+                          <span className="text-sm font-semibold text-yellow-400">
                             {study.results.costSavings}
                           </span>
                         </div>
-                        <div className="flex items-center justify-between rounded-lg bg-purple-50 p-3">
-                          <span className="text-sm font-medium text-purple-900">
+                        <div className="flex items-center justify-between rounded-lg bg-purple-900/20 border border-purple-700/30 p-3">
+                          <span className="text-sm font-medium text-purple-200">
                             CO₂ Reduction
                           </span>
-                          <span className="text-sm font-semibold text-purple-700">
+                          <span className="text-sm font-semibold text-purple-400">
                             {study.results.co2Reduction}
                           </span>
                         </div>
-                        <div className="flex items-center justify-between rounded-lg bg-gray-50 p-3">
-                          <span className="text-sm font-medium text-gray-900">
+                        <div className="flex items-center justify-between rounded-lg bg-neutral-800 p-3">
+                          <span className="text-sm font-medium text-neutral-100">
                             Payback Period
                           </span>
-                          <span className="text-sm font-semibold text-gray-700">
+                          <span className="text-sm font-semibold text-neutral-300">
                             {study.results.payback}
                           </span>
                         </div>
                       </div>
 
-                      <div className="mt-4 rounded-lg bg-gray-50 p-4">
-                        <h4 className="mb-2 text-sm font-semibold text-gray-900">
+                      <div className="mt-4 rounded-lg bg-neutral-800 p-4">
+                        <h4 className="mb-2 text-sm font-semibold text-neutral-100">
                           Additional Benefits
                         </h4>
-                        <ul className="space-y-1 text-sm text-gray-600">
+                        <ul className="space-y-1 text-sm text-neutral-300">
                           {study.results.additionalBenefits.map(
                             (benefit, idx) => (
                               <li key={idx} className="flex items-start">
@@ -345,7 +351,7 @@ export default function CaseStudiesPage() {
                   </div>
 
                   {/* Footer */}
-                  <div className="mt-6 flex items-center justify-between border-t pt-4 text-sm text-gray-500">
+                  <div className="mt-6 flex items-center justify-between border-t border-neutral-700 pt-4 text-sm text-neutral-400">
                     <div className="flex items-center space-x-2">
                       <Clock className="h-4 w-4" />
                       <span>Timeline: {study.timeline}</span>
@@ -362,12 +368,12 @@ export default function CaseStudiesPage() {
         </div>
 
         {/* Call to Action */}
-        <Card className="mt-12 bg-gradient-to-r from-green-50 to-blue-50">
+        <Card className="mt-12 bg-gradient-to-r from-green-900/30 to-blue-900/30 border-green-700/50">
           <CardContent className="p-8 text-center">
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-neutral-100">
               Ready to Optimize Your Data Center?
             </h2>
-            <p className="mt-2 text-gray-600">
+            <p className="mt-2 text-neutral-300">
               Use our simulator to create a custom renewable energy plan for
               your facility
             </p>
@@ -380,7 +386,7 @@ export default function CaseStudiesPage() {
               </a>
               <a
                 href="/docs"
-                className="rounded-lg bg-white px-6 py-3 font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+                className="rounded-lg bg-neutral-800 px-6 py-3 font-medium text-neutral-100 shadow-sm transition-colors hover:bg-neutral-700 border border-neutral-700"
               >
                 Read Documentation
               </a>

@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
+import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 import {
   Activity,
   BarChart3,
@@ -10,50 +11,52 @@ import {
   FileText,
   Lightbulb,
   Map,
-} from 'lucide-react';
+  type LucideIcon,
+} from "lucide-react";
 
-const navigation = [
+type NavigationItem = {
+  name: string;
+  href: `/${string}` | "/";
+  icon: LucideIcon; // ✅ Fixes Activity type issue
+  description: string;
+};
+
+const navigation: NavigationItem[] = [
   {
-    name: 'Dashboard',
-    href: '/',
-    icon: Activity,
-    description: 'Overview and sustainability score',
-  },
-  {
-    name: 'Efficiency',
-    href: '/efficiency',
+    name: "Efficiency",
+    href: "/efficiency",
     icon: BarChart3,
-    description: 'Energy efficiency optimization',
+    description: "Energy efficiency optimization",
   },
   {
-    name: 'Roadmap',
-    href: '/roadmap',
+    name: "Roadmap",
+    href: "/roadmap",
     icon: Map,
-    description: 'Renewable energy transition plan',
+    description: "Renewable energy transition plan",
   },
   {
-    name: 'Telemetry',
-    href: '/telemetry',
+    name: "Telemetry",
+    href: "/telemetry",
     icon: Activity,
-    description: 'Real-time monitoring',
+    description: "Real-time monitoring",
   },
   {
-    name: 'Reports',
-    href: '/reports',
+    name: "Reports",
+    href: "/reports",
     icon: FileText,
-    description: 'Analytics and reports',
+    description: "Analytics and reports",
   },
   {
-    name: 'Case Studies',
-    href: '/case-studies',
+    name: "Case Studies",
+    href: "/case-studies",
     icon: Lightbulb,
-    description: 'Real-world examples',
+    description: "Real-world examples",
   },
   {
-    name: 'Documentation',
-    href: '/docs',
+    name: "Documentation",
+    href: "/docs",
     icon: BookOpen,
-    description: 'Technical documentation',
+    description: "Technical documentation",
   },
 ];
 
@@ -61,104 +64,94 @@ export function MainNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="border-b bg-white shadow-sm">
+    <nav className="border-b border-neutral-800 bg-neutral-900 shadow-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo and brand */}
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-600">
-                <Activity className="h-5 w-5 text-white" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-lg font-bold text-gray-900">
-                  GreenCloud
-                </span>
-                <span className="text-xs text-gray-500">
-                  Data Center Optimizer
-                </span>
-              </div>
-            </Link>
-          </div>
+          {/* Logo + Brand */}
+          <Link href="/" className="flex items-center space-x-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-600">
+              <Activity className="h-5 w-5 text-white" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-lg font-bold text-neutral-100">
+                GreenCloud
+              </span>
+              <span className="text-xs text-neutral-400">
+                Data Center Optimizer
+              </span>
+            </div>
+          </Link>
 
-          {/* Navigation links */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-1">
-              {navigation.map((item) => {
-                const isActive = pathname === item.href;
-                const Icon = item.icon;
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex ml-10 space-x-1">
+            {navigation.map(({ name, href, icon: Icon, description }) => {
+              const isActive = pathname === href;
 
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
+              return (
+                <Link
+                  key={name}
+                  href={href}
+                  title={description}
+                  className={cn(
+                    "group flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    isActive
+                      ? "bg-green-600 text-white"
+                      : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                  )}
+                >
+                  <Icon
                     className={cn(
-                      'group flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                      "mr-2 h-4 w-4",
                       isActive
-                        ? 'bg-green-50 text-green-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        ? "text-white"
+                        : "text-neutral-400 group-hover:text-neutral-200"
                     )}
-                    title={item.description}
-                  >
-                    <Icon
-                      className={cn(
-                        'mr-2 h-4 w-4',
-                        isActive
-                          ? 'text-green-600'
-                          : 'text-gray-400 group-hover:text-gray-600'
-                      )}
-                    />
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </div>
+                  />
+                  {name}
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Right side - Status indicator */}
-          <div className="flex items-center space-x-4">
-            <div className="hidden items-center space-x-2 sm:flex">
-              <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-sm text-gray-600">System Online</span>
-            </div>
+          {/* Status Indicator */}
+          <div className="hidden sm:flex items-center space-x-2">
+            <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-sm text-neutral-300">System Online</span>
           </div>
         </div>
       </div>
 
-      {/* Mobile menu */}
-      <div className="border-t border-gray-200 md:hidden">
-        <div className="space-y-1 px-2 pb-3 pt-2">
-          {navigation.map((item) => {
-            const isActive = pathname === item.href;
-            const Icon = item.icon;
+      {/* Mobile Navigation */}
+      <div className="border-t border-neutral-800 md:hidden px-2 pb-3 pt-2 space-y-1">
+        {navigation.map(({ name, href, icon: Icon, description }) => {
+          const isActive = pathname === href;
 
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
+          return (
+            <Link
+              key={name}
+              href={href}
+              className={cn(
+                "group flex items-center rounded-md px-3 py-2 text-sm font-medium",
+                isActive
+                  ? "bg-green-600 text-white"
+                  : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
+              )}
+            >
+              <Icon
                 className={cn(
-                  'group flex items-center rounded-md px-3 py-2 text-sm font-medium',
+                  "mr-3 h-4 w-4",
                   isActive
-                    ? 'bg-green-50 text-green-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    ? "text-white"
+                    : "text-neutral-400 group-hover:text-neutral-200"
                 )}
-              >
-                <Icon
-                  className={cn(
-                    'mr-3 h-4 w-4',
-                    isActive
-                      ? 'text-green-600'
-                      : 'text-gray-400 group-hover:text-gray-600'
-                  )}
-                />
-                <div>
-                  <div>{item.name}</div>
-                  <div className="text-xs text-gray-500">{item.description}</div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+              />
+              <div>
+                <div>{name}</div>
+                <div className="text-xs text-neutral-400">{description}</div>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </nav>
   );
