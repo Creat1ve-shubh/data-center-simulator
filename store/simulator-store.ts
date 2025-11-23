@@ -1,50 +1,63 @@
-"use client"
+"use client";
 
-import { create } from "zustand"
-import type { TelemetryPoint, MetricSummaries, RoadmapPhase, PlanInput, PlanResult, RegionId } from "@/types"
+import { create } from "zustand";
+import type {
+  TelemetryPoint,
+  MetricSummaries,
+  RoadmapPhase,
+  PlanInput,
+  PlanResult,
+  RegionId,
+} from "@/types";
 
-type ViewKind = "efficiency" | "roadmap"
+type ViewKind = "efficiency" | "roadmap";
 
 type Params = {
-  refreshSec: number
-  windowHours: number
-  tariff: number
-  tariffSensitivity: number
-  mixSolar: number
-  mixWind: number
-  mixHydro: number
-}
+  refreshSec: number;
+  windowHours: number;
+  tariff: number;
+  tariffSensitivity: number;
+  mixSolar: number;
+  mixWind: number;
+  mixHydro: number;
+};
 
 type Store = {
-  view: ViewKind
-  setView: (v: ViewKind) => void
-  leftOpen: boolean
-  setLeftOpen: (b: boolean) => void
+  view: ViewKind;
+  setView: (v: ViewKind) => void;
+  leftOpen: boolean;
+  setLeftOpen: (b: boolean) => void;
 
-  telemetry: TelemetryPoint[]
-  setTelemetry: (t: TelemetryPoint[]) => void
+  scenarioId: string | null;
+  setScenarioId: (id: string | null) => void;
 
-  summaries: MetricSummaries | null
-  setSummaries: (s: MetricSummaries) => void
+  telemetry: TelemetryPoint[];
+  setTelemetry: (t: TelemetryPoint[]) => void;
 
-  phases: RoadmapPhase[]
-  addPhase: (p: RoadmapPhase) => void
-  updatePhase: (idx: number, p: Partial<RoadmapPhase>) => void
+  summaries: MetricSummaries | null;
+  setSummaries: (s: MetricSummaries) => void;
 
-  params: Params
-  setParams: (p: Partial<Params>) => void
+  phases: RoadmapPhase[];
+  addPhase: (p: RoadmapPhase) => void;
+  updatePhase: (idx: number, p: Partial<RoadmapPhase>) => void;
 
-  planInput: PlanInput
-  setPlanInput: (p: Partial<PlanInput>) => void
-  planResult: PlanResult | null
-  setPlanResult: (r: PlanResult | null) => void
-}
+  params: Params;
+  setParams: (p: Partial<Params>) => void;
+
+  planInput: PlanInput;
+  setPlanInput: (p: Partial<PlanInput>) => void;
+  planResult: PlanResult | null;
+  setPlanResult: (r: PlanResult | null) => void;
+};
 
 export const useSimulatorStore = create<Store>((set) => ({
   view: "efficiency",
   setView: (v) => set({ view: v }),
   leftOpen: true,
   setLeftOpen: (b) => set({ leftOpen: b }),
+
+  scenarioId: null,
+  setScenarioId: (id) => set({ scenarioId: id }),
 
   telemetry: [],
   setTelemetry: (t) => set({ telemetry: t }),
@@ -56,9 +69,9 @@ export const useSimulatorStore = create<Store>((set) => ({
   addPhase: (p) => set((st) => ({ phases: [...st.phases, p] })),
   updatePhase: (idx, patch) =>
     set((st) => {
-      const next = st.phases.slice()
-      next[idx] = { ...next[idx], ...patch }
-      return { phases: next }
+      const next = st.phases.slice();
+      next[idx] = { ...next[idx], ...patch };
+      return { phases: next };
     }),
 
   params: {
@@ -89,4 +102,4 @@ export const useSimulatorStore = create<Store>((set) => ({
   setPlanInput: (p) => set((st) => ({ planInput: { ...st.planInput, ...p } })),
   planResult: null,
   setPlanResult: (r) => set({ planResult: r }),
-}))
+}));

@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String?  @unique
+  name      String?
+  createdAt DateTime @default(now())
+
+  scenarios Scenario[]
+
+  @@map("users")
+}
+
+model Scenario {
+  id          String  @id @default(uuid())
+  userId      String?
+  name        String
+  description String?
+
+  // Location
+  latitude  Float
+  longitude Float
+
+  // Configuration as JSONB (flexible)
+  constraints Json // budget, renewable targets, capacity limits
+  pricing     Json // electricity, carbon, capex rates
+  currentLoad Json // average, peak, PUE
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  runs      PipelineRun[]
+  telemetry TelemetryData[]
+
+  @@index([userId, createdAt])
+  @@index([latitude, longitude])
+  @@map("scenarios")
+}
+
+model TelemetryData {
+  id         String @id @default(uuid())
+  scenarioId String
+
+  // Timestamp of data point
+  timestamp DateTime
+
+  // Energy metrics
+  facilityEnergyKWh Float
+  itLoadKW          Float?
+  coolingLoadKW     Float?
+  pue               Float?
+
+  // Renewable generation (if available)
+  solarGenKW   Float?
+  windGenKW    Float?
+  batterySOC   Float?
+  gridImportKW Float?
+
+  // Environmental
+  outdoorTempC    Float?
+  carbonIntensity Float?
+
+  // Metadata
+  uploadedAt DateTime @default(now())
+
+  scenario Scenario @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+
+  @@index([scenarioId, timestamp])
+  @@index([timestamp])
+  @@map("telemetry_data")
+}
+
+model PipelineRun {
+  id         String @id @default(uuid())
+  scenarioId String
+
+  // Execution metadata
+  success      Boolean
+  executionMs  Int
+  errorMessage String?
+
+  // Full input snapshot (for reproducibility)
+  inputSnapshot Json
+
+  // Summary metrics (denormalized for fast queries)
+  solarKw             Float?
+  windKw              Float?
+  batteryKwh          Float?
+  totalCapex          Float?
+  paybackMonths       Float?
+  npv20yr             Float?
+  roiPercent          Float?
+  renewableFraction   Float?
+  co2ReductionTonYear Float?
+
+  createdAt DateTime @default(now())
+
+  scenario    Scenario           @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+  stages      StageResult[]
+  vppa        VppaResult?
+  sensitivity SensitivityResult?
+
+  @@index([scenarioId, createdAt])
+  @@index([success, createdAt])
+  @@map("pipeline_runs")
+}
+
+model StageResult {
+  id        String @id @default(uuid())
+  runId     String
+  stageName String // 'planner', 'optimizer', 'pue', 'financial'
+  status    String // 'success', 'error', 'partial'
+  output    Json // Full stage output as JSONB
+
+  run PipelineRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@unique([runId, stageName])
+  @@index([runId])
+  @@map("stage_results")
+}
+
+model VppaResult {
+  id    String @id @default(uuid())
+  runId String @unique
+
+  strikePriceMwh     Float
+  contractDuration   Int
+  forwardCurve       Json? // Optional user-supplied curve
+  contractValue      Float
+  hedgeEffectiveness Float
+  lcoeMwh            Float
+
+  // Store annual cash flows as JSONB array
+  annualCashFlows Json
+
+  run PipelineRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@map("vppa_results")
+}
+
+model SensitivityResult {
+  id    String @id @default(uuid())
+  runId String @unique
+
+  iterations   Int
+  confidence95 Json // {npv_min, npv_max, roi_min_months, roi_max_months}
+  riskMetrics  Json // {probability_positive_npv, expected_value, var_95}
+  tornadoChart Json // Array of sensitivity rankings
+
+  run PipelineRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@map("sensitivity_results")
+}
+
+// Optional: Cache renewable data in DB (alternative to Redis)
+model RenewableCache {
+  id String @id @default(uuid())
+
+  // Cache key components
+  latitude  Float
+  longitude Float
+  startDate DateTime
+  endDate   DateTime
+
+  // Cached data
+  hourlyData  Json
+  dataQuality Json
+
+  cachedAt DateTime @default(now())
+
+  // TTL: 6 hours (cleanup with cron job or trigger)
+  expiresAt DateTime
+
+  @@unique([latitude, longitude, startDate, endDate])
+  @@index([expiresAt]) // For cleanup queries
+  @@map("renewable_cache")
+}

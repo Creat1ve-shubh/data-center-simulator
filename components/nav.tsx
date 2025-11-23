@@ -11,6 +11,7 @@ import {
   FileText,
   Lightbulb,
   Map,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 
@@ -27,6 +28,12 @@ const navigation: NavigationItem[] = [
     href: "/efficiency",
     icon: BarChart3,
     description: "Energy efficiency optimization",
+  },
+  {
+    name: "AI Planner",
+    href: "/renewable-planner",
+    icon: Zap,
+    description: "AI-powered renewable optimization",
   },
   {
     name: "Roadmap",
