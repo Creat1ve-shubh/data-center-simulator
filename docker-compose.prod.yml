@@ -58,7 +58,7 @@ services:
 
   # Next.js Application
   app:
-    image: ${DOCKER_IMAGE:-data-center-simulator:latest}
+    image: ${DOCKER_IMAGE:-shubh2047/data-center-simulator:latest}
     container_name: datacenter-app-prod
     restart: always
     depends_on:

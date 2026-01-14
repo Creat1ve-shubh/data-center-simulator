@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/data-center-simulator
+  IMAGE_NAME: shubh2047/data-center-simulator
 
 jobs:
   # Job 1: Run tests
@@ -60,6 +60,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
         run: pnpm prisma generate
 
       - name: Run database migrations
