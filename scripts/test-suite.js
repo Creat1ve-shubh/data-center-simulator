@@ -137,10 +137,6 @@ async function runTests() {
       })
     }
   ));
-        analysisType: 'comparison'
-      })
-    }
-  ));
 
   // Summary
   log('\n' + '='.repeat(60), 'blue');
