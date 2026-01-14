@@ -1,0 +1,5 @@
+# Backup directory for database dumps
+# Add your backup files here
+
+# This .gitkeep file ensures the directory is tracked by git
+# Actual backup files are ignored via .gitignore

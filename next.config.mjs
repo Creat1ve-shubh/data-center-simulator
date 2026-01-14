@@ -9,6 +9,12 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Required for Docker standalone output
+  output: 'standalone',
+  experimental: {
+    // Optimize bundle size
+    optimizePackageImports: ['recharts', 'lucide-react', '@radix-ui/react-icons'],
+  },
 }
 
 export default nextConfig

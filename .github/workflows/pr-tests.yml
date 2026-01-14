@@ -1,0 +1,122 @@
+name: Pull Request Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm prisma generate
+
+      - name: Run database migrations
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+        run: pnpm prisma migrate deploy
+
+      - name: Build application
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+          REDIS_URL: redis://localhost:6379
+          SKIP_ENV_VALIDATION: true
+        run: pnpm build
+
+      - name: Start application in background
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+          REDIS_URL: redis://localhost:6379
+        run: |
+          pnpm start &
+          echo $! > .pidfile
+          
+      - name: Wait for application to start
+        run: |
+          echo "Waiting for application to start..."
+          for i in {1..30}; do
+            if curl -f http://localhost:3000/api/health > /dev/null 2>&1; then
+              echo "Application is ready!"
+              exit 0
+            fi
+            echo "Attempt $i: Application not ready yet..."
+            sleep 2
+          done
+          echo "Application failed to start within timeout"
+          exit 1
+        
+      - name: Run API tests
+        env:
+          API_URL: http://localhost:3000
+        run: node scripts/test-suite.js
+
+      - name: Run linter
+        run: pnpm lint
+        continue-on-error: true
+
+      - name: Stop application
+        if: always()
+        run: |
+          if [ -f .pidfile ]; then
+            kill $(cat .pidfile) || true
+          fi
+
+      - name: Comment test results
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const status = '${{ job.status }}';
+            const emoji = status === 'success' ? '✅' : '❌';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `${emoji} **Tests ${status}**\n\nPipeline run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            })
