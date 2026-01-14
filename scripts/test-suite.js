@@ -59,10 +59,16 @@ async function runTests() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        location: { latitude: 37.7749, longitude: -122.4194 },
-        itLoad: 1000,
-        coolingType: 'air',
-        renewablePercent: 30
+        coordinates: { latitude: 37.7749, longitude: -122.4194 },
+        currentLoad: {
+          averageKW: 1000,
+          peakKW: 1200,
+          currentPUE: 1.5
+        },
+        constraints: {
+          budget: 500000,
+          targetRenewableFraction: 0.3
+        }
       })
     }
   ));
@@ -73,11 +79,12 @@ async function runTests() {
     `${API_URL}/api/scenarios`
   ));
 
-  // Test 4: Telemetry API - List
-  results.push(await testEndpoint(
-    'Telemetry API - List',
-    `${API_URL}/api/telemetry`
-  ));
+  // Test 4: Telemetry API - List (skip if no scenarios exist)
+  const telemetryTest = await testEndpoint(
+    'Telemetry API - Health Check',
+    `${API_URL}/api/telemetry?limit=1`
+  );
+  results.push(telemetryTest);
 
   // Test 5: Plan API - Invalid Input
   const invalidTest = await testEndpoint(
@@ -87,7 +94,12 @@ async function runTests() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        itLoad: -1000, // Invalid value
+        // Missing required coordinates
+        currentLoad: {
+          averageKW: -1000, // Invalid value
+          peakKW: 1200,
+          currentPUE: 1.5
+        }
       })
     }
   );
@@ -108,16 +120,23 @@ async function runTests() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        scenarios: [
-          {
-            name: 'Test Scenario 1',
-            latitude: 37.7749,
-            longitude: -122.4194,
-            itLoad: 1000,
-            coolingType: 'air',
-            renewablePercent: 30
-          }
-        ],
+        coordinates: { latitude: 37.7749, longitude: -122.4194 },
+        currentLoad: {
+          averageKW: 1000,
+          peakKW: 1200,
+          currentPUE: 1.5
+        },
+        constraints: {
+          budget: 1000000,
+          targetRenewableFraction: 0.5
+        },
+        pricing: {
+          electricityUSDPerKWh: 0.12,
+          carbonUSDPerTon: 50
+        }
+      })
+    }
+  ));
         analysisType: 'comparison'
       })
     }
