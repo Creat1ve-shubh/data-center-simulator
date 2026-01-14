@@ -40,6 +40,35 @@ export function exportToCSV(
 }
 
 /**
+ * Export results to CSV (alias for backward compatibility)
+ */
+export function exportResultsToCSV(results: any, location: string): void {
+  if (!results) return;
+  
+  const data = [{
+    location,
+    solarCapacity: results.solarCapacity || 0,
+    windCapacity: results.windCapacity || 0,
+    batteryCapacity: results.batteryCapacity || 0,
+    estimatedCost: results.estimatedCost || 0,
+    annualSavings: results.annualSavings || 0,
+    paybackPeriod: results.paybackPeriod || 0,
+    renewablePercentage: results.renewablePercentage || 0,
+  }];
+  
+  exportToCSV(data, `auto-plan-results-${location}.csv`);
+}
+
+/**
+ * Generate PDF report (stub implementation)
+ */
+export function generatePDFReport(results: any, location: string): string {
+  // Stub implementation - returns data URL for now
+  console.log('PDF generation not yet implemented');
+  return 'data:application/pdf;base64,';
+}
+
+/**
  * Export simulation results to comprehensive CSV
  */
 export function exportSimulationResults(

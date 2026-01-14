@@ -1,13 +1,9 @@
-import "dotenv/config";
-import { defineConfig, env } from "prisma/config";
+// Prisma configuration
+// Engine and datasource configuration is handled in schema.prisma
 
-export default defineConfig({
+export default {
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
   },
-  engine: "classic",
-  datasource: {
-    url: env("DATABASE_URL"),
-  },
-});
+};

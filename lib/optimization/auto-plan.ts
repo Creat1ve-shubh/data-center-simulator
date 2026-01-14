@@ -305,3 +305,6 @@ export function compareScenarios(
     };
   });
 }
+
+// Alias for backward compatibility
+export const optimizeEnergyMix = optimizeRenewableDeployment;
