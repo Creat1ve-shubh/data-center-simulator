@@ -6,14 +6,14 @@
 
 #### Why SQL is Right for Data Center Simulator:
 
-| Feature | Why It Matters | SQL Advantage |
-|---------|----------------|---------------|
-| **Relational Data** | Users → Scenarios → Runs → Results | Native foreign keys & joins |
-| **Financial Calculations** | NPV, ROI, payback calculations | ACID transactions, consistency |
-| **Complex Queries** | Filter, aggregate, paginate results | Native SQL optimization |
-| **Time-Series Data** | Telemetry with timestamps | Efficient indexing & partitioning |
-| **Audit Trail** | Reproducibility of calculations | Transaction logs, point-in-time recovery |
-| **Data Integrity** | Prevent orphaned records | Foreign key constraints |
+| Feature                    | Why It Matters                      | SQL Advantage                            |
+| -------------------------- | ----------------------------------- | ---------------------------------------- |
+| **Relational Data**        | Users → Scenarios → Runs → Results  | Native foreign keys & joins              |
+| **Financial Calculations** | NPV, ROI, payback calculations      | ACID transactions, consistency           |
+| **Complex Queries**        | Filter, aggregate, paginate results | Native SQL optimization                  |
+| **Time-Series Data**       | Telemetry with timestamps           | Efficient indexing & partitioning        |
+| **Audit Trail**            | Reproducibility of calculations     | Transaction logs, point-in-time recovery |
+| **Data Integrity**         | Prevent orphaned records            | Foreign key constraints                  |
 
 #### Hybrid Approach (Current Setup):
 
@@ -35,13 +35,13 @@ Redis (Cache Layer)
 
 ### Comparison Matrix
 
-| Provider | Free Tier | Price | Best For | Connection Pooling | Backups | Scaling |
-|----------|-----------|-------|----------|-------------------|---------|---------|
-| **Vercel Postgres** | 256 MB | $10/mo Pro | Vercel apps | ✅ Built-in | ✅ Auto | ✅ Auto |
-| **Neon** | 0.5 GB | $19/mo Pro | Serverless | ✅ Built-in | ✅ Auto | ✅ Auto |
-| **Supabase** | 500 MB | $25/mo Pro | Full backend | ✅ Built-in | ✅ Auto | ✅ Auto |
-| **Railway** | 512 MB | $5/mo | Quick start | ⚠️ Manual | ✅ Auto | ⚠️ Manual |
-| **AWS RDS** | None | ~$15/mo | Enterprise | ⚠️ Manual | ✅ Config | ✅ Config |
+| Provider            | Free Tier | Price      | Best For     | Connection Pooling | Backups   | Scaling   |
+| ------------------- | --------- | ---------- | ------------ | ------------------ | --------- | --------- |
+| **Vercel Postgres** | 256 MB    | $10/mo Pro | Vercel apps  | ✅ Built-in        | ✅ Auto   | ✅ Auto   |
+| **Neon**            | 0.5 GB    | $19/mo Pro | Serverless   | ✅ Built-in        | ✅ Auto   | ✅ Auto   |
+| **Supabase**        | 500 MB    | $25/mo Pro | Full backend | ✅ Built-in        | ✅ Auto   | ✅ Auto   |
+| **Railway**         | 512 MB    | $5/mo      | Quick start  | ⚠️ Manual          | ✅ Auto   | ⚠️ Manual |
+| **AWS RDS**         | None      | ~$15/mo    | Enterprise   | ⚠️ Manual          | ✅ Config | ✅ Config |
 
 ---
 
@@ -118,14 +118,15 @@ npx prisma generate --accelerate
 ### 1. Connection Pooling (Critical for Serverless)
 
 #### Current Setup (Good)
+
 ```typescript
 // lib/prisma.ts - Using pg adapter with connection pooling
-import { PrismaPg } from '@prisma/adapter-pg';
-import { Pool } from 'pg';
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 
-const pool = new Pool({ 
+const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  max: 10 // Adjust based on Vercel plan
+  max: 10, // Adjust based on Vercel plan
 });
 
 const adapter = new PrismaPg(pool);
@@ -133,19 +134,20 @@ const prisma = new PrismaClient({ adapter });
 ```
 
 #### Production Optimization
+
 ```typescript
 // lib/prisma.ts - Enhanced for production
-import { PrismaPg } from '@prisma/adapter-pg';
-import { Pool } from 'pg';
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 
 const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
-  throw new Error('DATABASE_URL is not set');
+  throw new Error("DATABASE_URL is not set");
 }
 
 // Configure pool based on environment
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === "production";
 
 const pool = new Pool({
   connectionString,
@@ -156,22 +158,20 @@ const pool = new Pool({
 });
 
 // Handle pool errors
-pool.on('error', (err) => {
-  console.error('Unexpected pool error:', err);
+pool.on("error", (err) => {
+  console.error("Unexpected pool error:", err);
 });
 
 const adapter = new PrismaPg(pool);
 
 export const prisma = new PrismaClient({
   adapter,
-  log: isProduction 
-    ? ['error', 'warn'] 
-    : ['query', 'error', 'warn'],
+  log: isProduction ? ["error", "warn"] : ["query", "error", "warn"],
 });
 
 // Graceful shutdown
-if (typeof window === 'undefined') {
-  process.on('beforeExit', async () => {
+if (typeof window === "undefined") {
+  process.on("beforeExit", async () => {
     await prisma.$disconnect();
     await pool.end();
   });
@@ -271,7 +271,7 @@ const runs = await prisma.pipelineRun.findMany({
   where: { scenarioId },
   take: 10,
   cursor: lastId ? { id: lastId } : undefined,
-  orderBy: { createdAt: 'desc' },
+  orderBy: { createdAt: "desc" },
 });
 ```
 
@@ -279,7 +279,7 @@ const runs = await prisma.pipelineRun.findMany({
 
 ```typescript
 // Use Redis for frequently accessed data
-import Redis from 'ioredis';
+import Redis from "ioredis";
 
 const redis = new Redis(process.env.REDIS_URL);
 
@@ -291,13 +291,13 @@ async function getCachedOrFetch<T>(
   // Try cache first
   const cached = await redis.get(key);
   if (cached) return JSON.parse(cached);
-  
+
   // Fetch from database
   const data = await fetchFn();
-  
+
   // Cache for next time
   await redis.setex(key, ttl, JSON.stringify(data));
-  
+
   return data;
 }
 
@@ -320,9 +320,11 @@ const scenario = await getCachedOrFetch(
 const connectionString = process.env.DATABASE_URL;
 
 // Validate SSL requirement
-if (process.env.NODE_ENV === 'production' && 
-    !connectionString.includes('sslmode=require')) {
-  console.warn('⚠️  SSL not enforced on production database!');
+if (
+  process.env.NODE_ENV === "production" &&
+  !connectionString.includes("sslmode=require")
+) {
+  console.warn("⚠️  SSL not enforced on production database!");
 }
 ```
 
@@ -330,7 +332,7 @@ if (process.env.NODE_ENV === 'production' &&
 
 ```typescript
 // Use Prisma's built-in validation + Zod
-import { z } from 'zod';
+import { z } from "zod";
 
 const createScenarioSchema = z.object({
   name: z.string().min(1).max(255),
@@ -352,7 +354,7 @@ await prisma.scenario.create({ data: validated });
 ```typescript
 // ✅ Safe: Prisma parameterizes queries automatically
 await prisma.scenario.findMany({
-  where: { name: { contains: userInput } }
+  where: { name: { contains: userInput } },
 });
 
 // ❌ Never use raw SQL with user input without parameterization
@@ -374,20 +376,21 @@ export const prisma = new PrismaClient({
   adapter,
   log: [
     {
-      emit: 'event',
-      level: 'query',
+      emit: "event",
+      level: "query",
     },
     {
-      emit: 'stdout',
-      level: 'error',
+      emit: "stdout",
+      level: "error",
     },
   ],
 });
 
 // Log slow queries
-prisma.$on('query', (e) => {
-  if (e.duration > 1000) { // Queries taking > 1s
-    console.warn('Slow query detected:', {
+prisma.$on("query", (e) => {
+  if (e.duration > 1000) {
+    // Queries taking > 1s
+    console.warn("Slow query detected:", {
       query: e.query,
       duration: `${e.duration}ms`,
     });
@@ -407,7 +410,7 @@ export async function GET() {
   };
 
   return Response.json({
-    status: 'healthy',
+    status: "healthy",
     database: poolStatus,
   });
 }
@@ -425,10 +428,10 @@ async function withErrorHandling<T>(
     return await operation();
   } catch (error) {
     console.error(`Database error in ${context}:`, error);
-    
+
     // Send to monitoring service (Sentry, etc.)
     // Sentry.captureException(error, { tags: { context } });
-    
+
     throw error;
   }
 }
@@ -453,22 +456,22 @@ neonctl branches create --name recovery-point --parent main
 
 ```typescript
 // scripts/backup-db.ts
-import { exec } from 'child_process';
-import { promisify } from 'util';
+import { exec } from "child_process";
+import { promisify } from "util";
 
 const execAsync = promisify(exec);
 
 async function backupDatabase() {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const backupFile = `backup-${timestamp}.sql`;
-  
+
   const command = `pg_dump ${process.env.DATABASE_URL} -f ${backupFile}`;
-  
+
   try {
     await execAsync(command);
     console.log(`✅ Backup created: ${backupFile}`);
   } catch (error) {
-    console.error('❌ Backup failed:', error);
+    console.error("❌ Backup failed:", error);
   }
 }
 
@@ -526,18 +529,21 @@ vercel logs --follow
 ## 💰 Cost Estimation
 
 ### Development (Free Tier)
+
 - **Neon:** Free 0.5 GB
 - **Vercel:** Free hosting
 - **Redis:** Railway free tier (500 MB)
 - **Total:** $0/month
 
 ### Production (Small Scale)
+
 - **Neon Pro:** $19/month (10 GB database)
 - **Vercel Pro:** $20/month (better limits)
 - **Redis:** Upstash $10/month (1 GB)
 - **Total:** ~$50/month
 
 ### Production (Medium Scale)
+
 - **Neon Scale:** $69/month (50 GB)
 - **Vercel Pro:** $20/month
 - **Redis:** Upstash $30/month (10 GB)

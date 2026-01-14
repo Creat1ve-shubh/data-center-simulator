@@ -33,7 +33,7 @@ export async function GET(
     return NextResponse.json(run);
   } catch (error: any) {
     console.error("[API] Failed to fetch run:", error);
-    
+
     // Check if it's a "not found" error from Prisma
     if (error.code === "P2025") {
       return NextResponse.json(
@@ -41,7 +41,7 @@ export async function GET(
         { status: 404 }
       );
     }
-    
+
     return NextResponse.json(
       { error: "Failed to fetch pipeline run", details: error.message },
       { status: 500 }

@@ -83,10 +83,10 @@ This guide shows how everything integrates together for a production-ready setup
 
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
-  max: 10,                    // Max 10 concurrent connections
-  idleTimeoutMillis: 30000,   // Close idle after 30 seconds
-  connectionTimeoutMillis: 10000,  // Timeout after 10 seconds
-  ssl: { rejectUnauthorized: false }  // SSL encrypted
+  max: 10, // Max 10 concurrent connections
+  idleTimeoutMillis: 30000, // Close idle after 30 seconds
+  connectionTimeoutMillis: 10000, // Timeout after 10 seconds
+  ssl: { rejectUnauthorized: false }, // SSL encrypted
 });
 
 const adapter = new PrismaPg(pool);
@@ -94,6 +94,7 @@ const prisma = new PrismaClient({ adapter });
 ```
 
 **How it works:**
+
 ```
 Request 1 → Get connection from pool ─┐
 Request 2 → Get connection from pool ─┼→ Database
@@ -102,6 +103,7 @@ Request 4 → Wait for free connection ┘
 ```
 
 This ensures:
+
 - ✅ No connection leaks
 - ✅ Efficient resource usage
 - ✅ Handles concurrent requests
@@ -150,13 +152,13 @@ Indexes (Optimized for queries):
 
 ### Why This Design?
 
-| Feature | Benefit |
-|---------|---------|
-| **PostgreSQL** | ACID transactions, complex queries, foreign keys |
-| **JSONB** | Flexible schema, store complex structures |
-| **Indexes** | Fast queries on frequently filtered fields |
-| **Denormalization** | Quick summary statistics without aggregation |
-| **Relations** | Enforce data integrity, prevent orphans |
+| Feature             | Benefit                                          |
+| ------------------- | ------------------------------------------------ |
+| **PostgreSQL**      | ACID transactions, complex queries, foreign keys |
+| **JSONB**           | Flexible schema, store complex structures        |
+| **Indexes**         | Fast queries on frequently filtered fields       |
+| **Denormalization** | Quick summary statistics without aggregation     |
+| **Relations**       | Enforce data integrity, prevent orphans          |
 
 ---
 
@@ -175,7 +177,7 @@ Indexes (Optimized for queries):
    .github/workflows/ci-cd.yml
    ↓
 4. CI/CD Pipeline runs:
-   
+
    ├─ Install dependencies (pnpm install)
    │
    ├─ Setup test database (PostgreSQL service)
@@ -194,7 +196,7 @@ Indexes (Optimized for queries):
    │
    └─ Run comprehensive tests (26 tests)
       (npm test)
-      
+
       If tests FAIL → Stop, notify developer
       If tests PASS → Continue to deployment
    ↓
@@ -205,7 +207,7 @@ Indexes (Optimized for queries):
    docker push shubh2047/data-center-simulator:latest
    ↓
 7. Deploy to Vercel
-   
+
    ├─ Pull latest code
    │
    ├─ Install dependencies
@@ -219,11 +221,11 @@ Indexes (Optimized for queries):
    │
    └─ Build & deploy
       (pnpm build)
-      
+
       Application is LIVE at: https://your-domain.vercel.app
    ↓
 8. Post-deployment verification
-   
+
    ├─ Health check: /api/health
    │
    ├─ Run smoke tests
@@ -295,6 +297,7 @@ npm run test:basic
 ## 🔐 Security Layers
 
 ### 1. Database Security
+
 ```
 ├─ SSL/TLS encryption (?sslmode=require)
 ├─ Connection pooling prevents connection exhaustion
@@ -303,6 +306,7 @@ npm run test:basic
 ```
 
 ### 2. Application Security
+
 ```
 ├─ Input validation (Zod schemas)
 ├─ Parameterized queries (Prisma handles this)
@@ -312,6 +316,7 @@ npm run test:basic
 ```
 
 ### 3. API Security
+
 ```
 ├─ CORS headers configured
 ├─ Rate limiting can be added
@@ -341,15 +346,15 @@ With pooling: Connections reused from pool
 const scenarios = await prisma.scenario.findMany();
 for (const scenario of scenarios) {
   const runs = await prisma.pipelineRun.findMany({
-    where: { scenarioId: scenario.id }  // Extra query for each!
+    where: { scenarioId: scenario.id }, // Extra query for each!
   });
 }
 
 // ✅ Fast: Single query with include
 const scenarios = await prisma.scenario.findMany({
   include: {
-    runs: true  // Joins in single query
-  }
+    runs: true, // Joins in single query
+  },
 });
 ```
 
@@ -363,7 +368,7 @@ let scenario = await redis.get(cacheKey);
 if (!scenario) {
   // Not in cache, fetch from DB
   scenario = await prisma.scenario.findUnique({
-    where: { id }
+    where: { id },
   });
   // Cache for 1 hour
   await redis.setex(cacheKey, 3600, JSON.stringify(scenario));
@@ -451,30 +456,30 @@ git push origin main
 ```typescript
 // 1. Create route: app/api/newfeature/route.ts
 
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate input
     if (!body.required_field) {
       return NextResponse.json(
-        { error: 'Missing required field' },
+        { error: "Missing required field" },
         { status: 400 }
       );
     }
-    
+
     // Use Prisma to interact with database
     const result = await prisma.yourModel.create({
-      data: body
+      data: body,
     });
-    
+
     return NextResponse.json(result, { status: 201 });
   } catch (error: any) {
     return NextResponse.json(
-      { error: 'Failed to create', details: error.message },
+      { error: "Failed to create", details: error.message },
       { status: 500 }
     );
   }
@@ -483,15 +488,13 @@ export async function POST(request: NextRequest) {
 
 ```typescript
 // 2. Add test to scripts/test-suite-comprehensive.js
-results.push(await testEndpoint(
-  'New Feature API',
-  `${API_URL}/api/newfeature`,
-  {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ required_field: 'value' })
-  }
-));
+results.push(
+  await testEndpoint("New Feature API", `${API_URL}/api/newfeature`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ required_field: "value" }),
+  })
+);
 ```
 
 ```bash
@@ -650,26 +653,31 @@ Local:
 This integration provides:
 
 ✅ **Reliable Database**
+
 - Vercel Postgres with SSL encryption
 - Automatic backups and recovery
 - Connection pooling for performance
 
 ✅ **Robust Application**
+
 - Next.js with TypeScript
 - Prisma ORM for type safety
 - Comprehensive error handling
 
 ✅ **Automated Testing**
+
 - 26 tests covering all endpoints
 - Tests run before every deployment
 - Blocks deployment if tests fail
 
 ✅ **Continuous Deployment**
+
 - Automatic deployment on push to main
 - Migrations run automatically
 - Health checks after deployment
 
 ✅ **Production Monitoring**
+
 - Vercel analytics and logs
 - Database usage tracking
 - Performance metrics

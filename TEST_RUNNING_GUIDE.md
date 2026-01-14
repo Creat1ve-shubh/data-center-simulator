@@ -114,12 +114,12 @@ npm test
 
 ## Test Commands
 
-| Command | Description | When to Use |
-|---------|-------------|-------------|
-| `npm test` | Comprehensive test suite (26 tests) | Before deployment, CI/CD |
-| `npm run test:basic` | Quick smoke tests (6 tests) | Quick validation |
-| `npm run test:api` | Test plan API only | Debugging plan endpoint |
-| `npm run test:orchestrate` | Test orchestrator API only | Debugging orchestration |
+| Command                    | Description                         | When to Use              |
+| -------------------------- | ----------------------------------- | ------------------------ |
+| `npm test`                 | Comprehensive test suite (26 tests) | Before deployment, CI/CD |
+| `npm run test:basic`       | Quick smoke tests (6 tests)         | Quick validation         |
+| `npm run test:api`         | Test plan API only                  | Debugging plan endpoint  |
+| `npm run test:orchestrate` | Test orchestrator API only          | Debugging orchestration  |
 
 ## Testing Against Production
 
@@ -303,13 +303,13 @@ docker-compose up -d --build
 
 Expected response times on local development:
 
-| Endpoint | Average | Max Acceptable |
-|----------|---------|----------------|
-| Health Check | < 50ms | < 200ms |
-| Plan API | < 1s | < 3s |
-| Orchestrator API | < 2s | < 5s |
-| Scenarios API | < 500ms | < 2s |
-| Runs API | < 500ms | < 2s |
+| Endpoint         | Average | Max Acceptable |
+| ---------------- | ------- | -------------- |
+| Health Check     | < 50ms  | < 200ms        |
+| Plan API         | < 1s    | < 3s           |
+| Orchestrator API | < 2s    | < 5s           |
+| Scenarios API    | < 500ms | < 2s           |
+| Runs API         | < 500ms | < 2s           |
 
 ## Debugging Failed Tests
 
@@ -320,7 +320,7 @@ Modify the test file temporarily to see full responses:
 ```javascript
 // In scripts/test-suite-comprehensive.js
 // Add this in the testEndpoint function
-console.log('Response:', JSON.stringify(data, null, 2));
+console.log("Response:", JSON.stringify(data, null, 2));
 ```
 
 ### Test Individual Endpoints
@@ -352,20 +352,24 @@ docker-compose logs app
 ## Best Practices
 
 1. **Always start services before testing**
+
    - Use Docker Compose for consistency
    - Wait for services to be fully ready
 
 2. **Run tests frequently**
+
    - Before committing changes
    - After making API modifications
    - Before creating pull requests
 
 3. **Monitor test output**
+
    - Check which specific tests fail
    - Review error messages carefully
    - Fix underlying issues, not just tests
 
 4. **Keep test database clean**
+
    - Docker Compose recreates database on restart
    - Use migrations for schema changes
 

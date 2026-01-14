@@ -6,16 +6,16 @@
 
 ## 📋 Current Setup Status
 
-| Component | Status | Details |
-|-----------|--------|---------|
-| **Database** | ✅ Ready | Vercel Postgres created |
-| **ORM** | ✅ Ready | Prisma 7.x configured |
+| Component      | Status   | Details                         |
+| -------------- | -------- | ------------------------------- |
+| **Database**   | ✅ Ready | Vercel Postgres created         |
+| **ORM**        | ✅ Ready | Prisma 7.x configured           |
 | **Connection** | ✅ Ready | pg adapter + connection pooling |
-| **Migrations** | ✅ Ready | Auto-migrations on deploy |
-| **Testing** | ✅ Ready | 26 comprehensive tests |
-| **CI/CD** | ✅ Ready | GitHub Actions pipeline |
-| **Deployment** | ✅ Ready | Vercel serverless |
-| **Monitoring** | ✅ Ready | Vercel dashboard + logs |
+| **Migrations** | ✅ Ready | Auto-migrations on deploy       |
+| **Testing**    | ✅ Ready | 26 comprehensive tests          |
+| **CI/CD**      | ✅ Ready | GitHub Actions pipeline         |
+| **Deployment** | ✅ Ready | Vercel serverless               |
+| **Monitoring** | ✅ Ready | Vercel dashboard + logs         |
 
 ---
 
@@ -77,12 +77,14 @@ git push origin main
 ## 📖 Documentation Map
 
 ### For Getting Started
+
 - **[VERCEL_POSTGRES_QUICKSTART.md](./VERCEL_POSTGRES_QUICKSTART.md)** ← START HERE
   - 5-minute setup
   - Common issues & solutions
   - Useful commands
 
 ### For Understanding the System
+
 - **[INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md)**
   - Complete architecture diagram
   - Request flow examples
@@ -90,6 +92,7 @@ git push origin main
   - Development workflow
 
 ### For Deep Technical Details
+
 - **[DATABASE_PRODUCTION_SETUP.md](./DATABASE_PRODUCTION_SETUP.md)**
   - SQL vs NoSQL comparison
   - Database provider options
@@ -97,6 +100,7 @@ git push origin main
   - Security best practices
 
 ### For Specific Tasks
+
 - **[VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)** - Vercel setup
 - **[TEST_COVERAGE.md](./TEST_COVERAGE.md)** - Test suite details
 - **[TEST_RUNNING_GUIDE.md](./TEST_RUNNING_GUIDE.md)** - Running tests
@@ -108,6 +112,7 @@ git push origin main
 ## 🛠️ Essential Commands
 
 ### Setup
+
 ```bash
 vercel env pull          # Get environment variables
 pnpm db:setup            # Generate Prisma + migrate
@@ -116,6 +121,7 @@ pnpm build:prod          # Production build
 ```
 
 ### Database
+
 ```bash
 pnpm prisma studio      # Open database GUI
 pnpm prisma migrate status  # Check migrations
@@ -123,6 +129,7 @@ pnpm prisma generate    # Generate Prisma Client
 ```
 
 ### Testing
+
 ```bash
 npm test                # Full suite (26 tests)
 npm run test:basic      # Quick smoke tests (6 tests)
@@ -131,6 +138,7 @@ API_URL=https://your-app.vercel.app npm test  # Production test
 ```
 
 ### Development
+
 ```bash
 pnpm dev                # Start dev server
 docker-compose up -d    # Start Docker services
@@ -139,6 +147,7 @@ git push origin main    # Deploy to Vercel
 ```
 
 ### Monitoring
+
 ```bash
 vercel logs --follow    # Real-time logs
 vercel env pull         # Pull environment
@@ -203,6 +212,7 @@ Application is LIVE at: https://your-app.vercel.app
 ## 🔐 Security & Best Practices
 
 ### ✅ Database Security
+
 ```
 ✓ SSL encryption enabled
 ✓ Connection pooling prevents exhaustion
@@ -211,6 +221,7 @@ Application is LIVE at: https://your-app.vercel.app
 ```
 
 ### ✅ Application Security
+
 ```
 ✓ Environment variables in Vercel (not in code)
 ✓ Input validation with Zod
@@ -220,6 +231,7 @@ Application is LIVE at: https://your-app.vercel.app
 ```
 
 ### ✅ Deployment Security
+
 ```
 ✓ Tests must pass before deploy
 ✓ Automated backups
@@ -232,12 +244,14 @@ Application is LIVE at: https://your-app.vercel.app
 ## 🆘 Troubleshooting
 
 ### "DATABASE_URL not set"
+
 ```bash
 vercel env pull
 cat .env.local | grep DATABASE_URL
 ```
 
 ### "Can't reach database server"
+
 ```bash
 # Check Vercel Postgres is running
 vercel env pull
@@ -245,12 +259,14 @@ pnpm db:setup
 ```
 
 ### "Prisma Client error"
+
 ```bash
 pnpm prisma generate
 npm test
 ```
 
 ### "Tests failing"
+
 ```bash
 # Run locally first
 pnpm dev
@@ -261,6 +277,7 @@ vercel logs
 ```
 
 ### "Build fails on Vercel"
+
 ```bash
 # Verify environment variables
 # Vercel Dashboard → Settings → Environment Variables
@@ -274,21 +291,23 @@ vercel logs
 ## 📊 Production Metrics
 
 ### Expected Performance
-| Operation | Target | Max Acceptable |
-|-----------|--------|----------------|
-| Health Check | < 100ms | < 300ms |
-| API Response | < 500ms | < 2000ms |
-| Database Query | < 100ms | < 500ms |
-| Test Suite | < 30s | < 60s |
+
+| Operation      | Target  | Max Acceptable |
+| -------------- | ------- | -------------- |
+| Health Check   | < 100ms | < 300ms        |
+| API Response   | < 500ms | < 2000ms       |
+| Database Query | < 100ms | < 500ms        |
+| Test Suite     | < 30s   | < 60s          |
 
 ### Expected Database Size
-| Table | Typical Size |
-|-------|--------------|
-| Users | < 100 MB |
-| Scenarios | < 500 MB |
-| Telemetry | < 2 GB |
-| Runs | < 500 MB |
-| **Total** | **< 5 GB** |
+
+| Table     | Typical Size |
+| --------- | ------------ |
+| Users     | < 100 MB     |
+| Scenarios | < 500 MB     |
+| Telemetry | < 2 GB       |
+| Runs      | < 500 MB     |
+| **Total** | **< 5 GB**   |
 
 ---
 
@@ -296,12 +315,12 @@ vercel logs
 
 ### As You Grow
 
-| Metric | Free Tier | Pro Tier |
-|--------|-----------|----------|
-| Storage | 256 MB | 512 MB → 10 GB+ |
-| Compute | Limited | Unlimited |
-| Connections | 10 | 20+ |
-| Cost | Free | $10-50/month |
+| Metric      | Free Tier | Pro Tier        |
+| ----------- | --------- | --------------- |
+| Storage     | 256 MB    | 512 MB → 10 GB+ |
+| Compute     | Limited   | Unlimited       |
+| Connections | 10        | 20+             |
+| Cost        | Free      | $10-50/month    |
 
 ### When to Scale
 
@@ -317,18 +336,21 @@ High cost → Optimize queries
 ## 🎓 Learning Resources
 
 ### Official Documentation
+
 - [Vercel Postgres Docs](https://vercel.com/docs/storage/vercel-postgres)
 - [Prisma Documentation](https://www.prisma.io/docs/)
 - [Next.js API Routes](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)
 - [PostgreSQL Docs](https://www.postgresql.org/docs/)
 
 ### Tutorials
+
 - Setting up Prisma with PostgreSQL
 - Next.js API Route best practices
 - Database optimization tips
 - Connection pooling patterns
 
 ### Community
+
 - Prisma Discord: https://discord.gg/RUmbBYUsPF
 - Next.js Discussions: https://github.com/vercel/next.js/discussions
 - Stack Overflow: `prisma` `next.js` tags
@@ -338,6 +360,7 @@ High cost → Optimize queries
 ## ✨ What You Have
 
 ### Infrastructure
+
 ```
 ✅ Vercel Postgres (managed PostgreSQL)
 ✅ Vercel Hosting (serverless Next.js)
@@ -347,6 +370,7 @@ High cost → Optimize queries
 ```
 
 ### Code Quality
+
 ```
 ✅ TypeScript (type safety)
 ✅ Prisma ORM (safe database access)
@@ -356,6 +380,7 @@ High cost → Optimize queries
 ```
 
 ### Testing & Quality
+
 ```
 ✅ 26 comprehensive tests
 ✅ CI/CD pipeline
@@ -365,6 +390,7 @@ High cost → Optimize queries
 ```
 
 ### Documentation
+
 ```
 ✅ 10+ setup & reference guides
 ✅ Architecture diagrams
@@ -409,15 +435,15 @@ API_URL=https://your-app.vercel.app npm test
 
 ## 📞 Quick Reference
 
-| Need | Command |
-|------|---------|
-| Setup | `vercel env pull && pnpm db:setup` |
-| Test | `npm test` |
-| Deploy | `git push origin main` |
-| View Logs | `vercel logs --follow` |
-| Check DB | `pnpm prisma studio` |
-| Verify | `node scripts/verify-db-setup.js` |
-| Build | `pnpm build:prod` |
+| Need      | Command                            |
+| --------- | ---------------------------------- |
+| Setup     | `vercel env pull && pnpm db:setup` |
+| Test      | `npm test`                         |
+| Deploy    | `git push origin main`             |
+| View Logs | `vercel logs --follow`             |
+| Check DB  | `pnpm prisma studio`               |
+| Verify    | `node scripts/verify-db-setup.js`  |
+| Build     | `pnpm build:prod`                  |
 
 ---
 
