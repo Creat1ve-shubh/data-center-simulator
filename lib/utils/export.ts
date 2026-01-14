@@ -8,10 +8,10 @@
  */
 export function exportToCSV(
   data: Record<string, any>[],
-  filename: string = 'export.csv'
+  filename: string = "export.csv"
 ): void {
   if (data.length === 0) {
-    console.warn('No data to export');
+    console.warn("No data to export");
     return;
   }
 
@@ -20,23 +20,23 @@ export function exportToCSV(
 
   // Create CSV content
   const csvContent = [
-    headers.join(','), // Header row
+    headers.join(","), // Header row
     ...data.map((row) =>
       headers
         .map((header) => {
           const value = row[header];
           // Handle strings with commas by wrapping in quotes
-          if (typeof value === 'string' && value.includes(',')) {
+          if (typeof value === "string" && value.includes(",")) {
             return `"${value}"`;
           }
           return value;
         })
-        .join(',')
+        .join(",")
     ),
-  ].join('\n');
+  ].join("\n");
 
   // Create and trigger download
-  downloadFile(csvContent, filename, 'text/csv');
+  downloadFile(csvContent, filename, "text/csv");
 }
 
 /**
@@ -44,18 +44,20 @@ export function exportToCSV(
  */
 export function exportResultsToCSV(results: any, location: string): void {
   if (!results) return;
-  
-  const data = [{
-    location,
-    solarCapacity: results.solarCapacity || 0,
-    windCapacity: results.windCapacity || 0,
-    batteryCapacity: results.batteryCapacity || 0,
-    estimatedCost: results.estimatedCost || 0,
-    annualSavings: results.annualSavings || 0,
-    paybackPeriod: results.paybackPeriod || 0,
-    renewablePercentage: results.renewablePercentage || 0,
-  }];
-  
+
+  const data = [
+    {
+      location,
+      solarCapacity: results.solarCapacity || 0,
+      windCapacity: results.windCapacity || 0,
+      batteryCapacity: results.batteryCapacity || 0,
+      estimatedCost: results.estimatedCost || 0,
+      annualSavings: results.annualSavings || 0,
+      paybackPeriod: results.paybackPeriod || 0,
+      renewablePercentage: results.renewablePercentage || 0,
+    },
+  ];
+
   exportToCSV(data, `auto-plan-results-${location}.csv`);
 }
 
@@ -64,8 +66,8 @@ export function exportResultsToCSV(results: any, location: string): void {
  */
 export function generatePDFReport(results: any, location: string): string {
   // Stub implementation - returns data URL for now
-  console.log('PDF generation not yet implemented');
-  return 'data:application/pdf;base64,';
+  console.log("PDF generation not yet implemented");
+  return "data:application/pdf;base64,";
 }
 
 /**
@@ -75,40 +77,40 @@ export function exportSimulationResults(
   metadata: Record<string, any>,
   metrics: Record<string, any>[],
   timeline: Record<string, any>[],
-  filename: string = 'simulation-results.csv'
+  filename: string = "simulation-results.csv"
 ): void {
   const sections: string[] = [];
 
   // Add metadata section
-  sections.push('SIMULATION METADATA');
+  sections.push("SIMULATION METADATA");
   Object.entries(metadata).forEach(([key, value]) => {
     sections.push(`${key},${value}`);
   });
-  sections.push(''); // Empty line
+  sections.push(""); // Empty line
 
   // Add metrics section
   if (metrics.length > 0) {
-    sections.push('METRICS');
+    sections.push("METRICS");
     const metricHeaders = Object.keys(metrics[0]);
-    sections.push(metricHeaders.join(','));
+    sections.push(metricHeaders.join(","));
     metrics.forEach((metric) => {
-      sections.push(metricHeaders.map((h) => metric[h]).join(','));
+      sections.push(metricHeaders.map((h) => metric[h]).join(","));
     });
-    sections.push('');
+    sections.push("");
   }
 
   // Add timeline section
   if (timeline.length > 0) {
-    sections.push('TIMELINE');
+    sections.push("TIMELINE");
     const timelineHeaders = Object.keys(timeline[0]);
-    sections.push(timelineHeaders.join(','));
+    sections.push(timelineHeaders.join(","));
     timeline.forEach((item) => {
-      sections.push(timelineHeaders.map((h) => item[h]).join(','));
+      sections.push(timelineHeaders.map((h) => item[h]).join(","));
     });
   }
 
-  const csvContent = sections.join('\n');
-  downloadFile(csvContent, filename, 'text/csv');
+  const csvContent = sections.join("\n");
+  downloadFile(csvContent, filename, "text/csv");
 }
 
 /**
@@ -116,7 +118,7 @@ export function exportSimulationResults(
  */
 export function exportToPDF(
   elementId: string,
-  filename: string = 'report.pdf'
+  filename: string = "report.pdf"
 ): void {
   // Store original title
   const originalTitle = document.title;
@@ -133,7 +135,7 @@ export function exportToPDF(
   const printContent = element.cloneNode(true) as HTMLElement;
 
   // Create a print-friendly wrapper
-  const printWindow = document.createElement('div');
+  const printWindow = document.createElement("div");
   printWindow.style.cssText = `
     position: fixed;
     top: 0;
@@ -151,7 +153,7 @@ export function exportToPDF(
   document.body.appendChild(printWindow);
 
   // Add print styles
-  const printStyles = document.createElement('style');
+  const printStyles = document.createElement("style");
   printStyles.textContent = `
     @media print {
       body * {
@@ -172,7 +174,7 @@ export function exportToPDF(
       }
     }
   `;
-  printWindow.id = 'print-content';
+  printWindow.id = "print-content";
   document.head.appendChild(printStyles);
 
   // Trigger print dialog
@@ -193,11 +195,11 @@ export function exportToPDF(
  */
 export function exportChartAsPNG(
   chartElement: HTMLElement,
-  filename: string = 'chart.png'
+  filename: string = "chart.png"
 ): void {
   // This is a simple implementation. For production, consider using html2canvas or similar library
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
   // Set canvas size to match element
@@ -208,18 +210,18 @@ export function exportChartAsPNG(
   ctx.scale(2, 2);
 
   // Draw white background
-  ctx.fillStyle = 'white';
+  ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // Try to capture SVG elements (for recharts)
-  const svgElements = chartElement.querySelectorAll('svg');
+  const svgElements = chartElement.querySelectorAll("svg");
   if (svgElements.length > 0) {
     svgElements.forEach((svg) => {
       const serializer = new XMLSerializer();
       const svgString = serializer.serializeToString(svg);
       const img = new Image();
       const svgBlob = new Blob([svgString], {
-        type: 'image/svg+xml;charset=utf-8',
+        type: "image/svg+xml;charset=utf-8",
       });
       const url = URL.createObjectURL(svgBlob);
 
@@ -231,7 +233,7 @@ export function exportChartAsPNG(
         canvas.toBlob((blob) => {
           if (blob) {
             const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
+            const link = document.createElement("a");
             link.href = url;
             link.download = filename;
             link.click();
@@ -245,7 +247,7 @@ export function exportChartAsPNG(
   } else {
     // Fallback: just show a message
     console.warn(
-      'Chart export: Consider using html2canvas library for better quality'
+      "Chart export: Consider using html2canvas library for better quality"
     );
   }
 }
@@ -260,7 +262,7 @@ function downloadFile(
 ): void {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = url;
   link.download = filename;
   document.body.appendChild(link);
@@ -279,8 +281,8 @@ export function formatForExport(
     const formatted: Record<string, any> = {};
     Object.entries(row).forEach(([key, value]) => {
       if (value instanceof Date) {
-        formatted[key] = value.toISOString().split('T')[0];
-      } else if (typeof value === 'number') {
+        formatted[key] = value.toISOString().split("T")[0];
+      } else if (typeof value === "number") {
         formatted[key] = Math.round(value * 100) / 100; // Round to 2 decimals
       } else {
         formatted[key] = value;
@@ -293,9 +295,7 @@ export function formatForExport(
 /**
  * Generate summary statistics for export
  */
-export function generateSummaryStats(
-  data: number[]
-): Record<string, number> {
+export function generateSummaryStats(data: number[]): Record<string, number> {
   if (data.length === 0) return {};
 
   const sorted = [...data].sort((a, b) => a - b);
@@ -307,7 +307,8 @@ export function generateSummaryStats(
 
   // Calculate standard deviation
   const squaredDiffs = data.map((val) => Math.pow(val - mean, 2));
-  const variance = squaredDiffs.reduce((acc, val) => acc + val, 0) / data.length;
+  const variance =
+    squaredDiffs.reduce((acc, val) => acc + val, 0) / data.length;
   const stdDev = Math.sqrt(variance);
 
   return {

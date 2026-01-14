@@ -7,11 +7,12 @@ const globalForPrisma = globalThis as unknown as {
 // Only initialize Prisma if DATABASE_URL is set
 const createPrismaClient = () => {
   if (!process.env.DATABASE_URL) {
-    console.warn('DATABASE_URL not set, Prisma client not initialized');
+    console.warn("DATABASE_URL not set, Prisma client not initialized");
     return null;
   }
-  
+
   return new PrismaClient({
+    datasourceUrl: process.env.DATABASE_URL,
     log:
       process.env.NODE_ENV === "development"
         ? ["query", "error", "warn"]
@@ -19,9 +20,7 @@ const createPrismaClient = () => {
   });
 };
 
-export const prisma =
-  globalForPrisma.prisma ??
-  createPrismaClient();
+export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
 if (process.env.NODE_ENV !== "production" && prisma) {
   globalForPrisma.prisma = prisma;

@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     // Check if Prisma is initialized
     if (!prisma) {
       return NextResponse.json(
-        { error: 'Database not configured' },
+        { error: "Database not configured" },
         { status: 503 }
       );
     }
