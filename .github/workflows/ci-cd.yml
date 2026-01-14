@@ -84,10 +84,10 @@ jobs:
           pnpm start &
           sleep 15
         
-      - name: Run API tests
+      - name: Run Comprehensive API tests
         env:
           API_URL: http://localhost:3000
-        run: node scripts/test-suite.js
+        run: node scripts/test-suite-comprehensive.js
 
       - name: Lint check
         run: pnpm lint
